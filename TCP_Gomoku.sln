@@ -3,9 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gomoku.Client", "Gomoku.Client", "{309B5DF3-50A3-49B4-BE1F-C7B0748819C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gomoku.Client", "Gomoku.Client\Gomoku.Client\Gomoku.Client.csproj", "{70739A68-CBC0-4451-B237-0383024F4313}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70739A68-CBC0-4451-B237-0383024F4313}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70739A68-CBC0-4451-B237-0383024F4313}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70739A68-CBC0-4451-B237-0383024F4313}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70739A68-CBC0-4451-B237-0383024F4313}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{70739A68-CBC0-4451-B237-0383024F4313} = {309B5DF3-50A3-49B4-BE1F-C7B0748819C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1A191D89-DE23-4D59-84E8-3D3B8C21D16B}
