@@ -20,11 +20,9 @@ namespace Gomoku.Client.Abstract
         /// <summary>
         /// 建構子
         /// </summary>
-        /// <param name="x">棋子 x 座標</param>
-        /// <param name="y">棋子 y 座標</param>
         public PieceBase(int x,int y)
         {
-            this.BackColor = Color.Transparent;
+            this.BackColor = Color.FromArgb(235, 201, 129);
             this.Size = new Size(baseSize, baseSize);
             this.Location = new Point(x - baseSize / 2, y - baseSize / 2);
         }
