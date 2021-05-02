@@ -35,5 +35,10 @@ namespace Gomoku.Client.Interface
         /// <param name="y">棋盤 y 座標</param>
         /// <returns></returns>
         public PieceType GetCurrentPieceType(int x, int y);
+
+        /// <summary>
+        /// 重置棋盤
+        /// </summary>
+        public void ResetBoard();
     }
 }

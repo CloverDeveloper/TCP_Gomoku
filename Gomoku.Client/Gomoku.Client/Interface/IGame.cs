@@ -33,5 +33,10 @@ namespace Gomoku.Client.Interface
         /// </summary>
         /// <returns></returns>
         public string CheckWinner();
+
+        /// <summary>
+        /// 重置遊戲
+        /// </summary>
+        public void ResetGame();
     }
 }

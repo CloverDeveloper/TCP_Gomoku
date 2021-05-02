@@ -183,5 +183,14 @@ namespace Gomoku.Client.Model
 
             return pieces[x, y].GetPieceType();
         }
+
+        /// <summary>
+        /// 重置棋盤
+        /// </summary>
+        public void ResetBoard()
+        {
+            pieces = new PieceBase[9, 9];
+            lastPiecePoint = NODE_NO_MATCH;
+        }
     }
 }

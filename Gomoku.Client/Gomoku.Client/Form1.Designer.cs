@@ -44,7 +44,7 @@ namespace Gomoku.Client
             this.tb_MsgBox = new System.Windows.Forms.TextBox();
             this.tb_ChatBox = new System.Windows.Forms.TextBox();
             this.btn_SendMsg = new System.Windows.Forms.Button();
-            this.btn_lose = new System.Windows.Forms.Button();
+            this.btn_giveup = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Board)).BeginInit();
             this.SuspendLayout();
             // 
@@ -167,21 +167,21 @@ namespace Gomoku.Client
             this.btn_SendMsg.Text = "發話";
             this.btn_SendMsg.UseVisualStyleBackColor = true;
             // 
-            // btn_lose
+            // btn_giveup
             // 
-            this.btn_lose.Location = new System.Drawing.Point(772, 721);
-            this.btn_lose.Name = "btn_lose";
-            this.btn_lose.Size = new System.Drawing.Size(168, 29);
-            this.btn_lose.TabIndex = 14;
-            this.btn_lose.Text = "投降";
-            this.btn_lose.UseVisualStyleBackColor = true;
+            this.btn_giveup.Location = new System.Drawing.Point(772, 721);
+            this.btn_giveup.Name = "btn_giveup";
+            this.btn_giveup.Size = new System.Drawing.Size(168, 29);
+            this.btn_giveup.TabIndex = 14;
+            this.btn_giveup.Text = "投降";
+            this.btn_giveup.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 753);
-            this.Controls.Add(this.btn_lose);
+            this.Controls.Add(this.btn_giveup);
             this.Controls.Add(this.btn_SendMsg);
             this.Controls.Add(this.tb_ChatBox);
             this.Controls.Add(this.tb_MsgBox);
@@ -221,6 +221,7 @@ namespace Gomoku.Client
         private System.Windows.Forms.TextBox tb_ChatBox;
         private System.Windows.Forms.Button btn_SendMsg;
         private System.Windows.Forms.Button btn_lose;
+        private System.Windows.Forms.Button btn_giveup;
     }
 }
 

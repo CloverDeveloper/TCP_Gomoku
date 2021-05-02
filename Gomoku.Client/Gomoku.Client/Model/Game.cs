@@ -158,13 +158,27 @@ namespace Gomoku.Client.Model
                 }
             }
 
+            var res = string.Empty;
+
             // 若有方向到達獲勝數就回傳勝利者
             if (verticalCount == 5 || horizontalCount == 5 || upSlashCount == 5 || downSlashCount == 5)
             {
-                return "有獲勝者";
+                res = "白棋獲勝";
+                if (currentPlayer == PieceType.Black)
+                {
+                    res = "黑棋獲勝";
+                }
             }
 
-            return string.Empty;
+            return res;
+        }
+
+        /// <summary>
+        /// 重置遊戲
+        /// </summary>
+        public void ResetGame()
+        {
+            board.ResetBoard();
         }
     }
 }
