@@ -27,5 +27,13 @@ namespace Gomoku.Client.Interface
         /// <param name="y">棋盤 y 座標</param>
         /// <returns></returns>
         public bool CanBePlace(int x, int y);
+
+        /// <summary>
+        /// 取得當前棋子種類
+        /// </summary>
+        /// <param name="x">棋盤 x 座標</param>
+        /// <param name="y">棋盤 y 座標</param>
+        /// <returns></returns>
+        public PieceType GetCurrentPieceType(int x, int y);
     }
 }

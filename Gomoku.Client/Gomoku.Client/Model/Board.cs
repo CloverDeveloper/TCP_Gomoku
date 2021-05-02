@@ -171,5 +171,17 @@ namespace Gomoku.Client.Model
 
             return res;
         }
+
+        /// <summary>
+        /// 取得當前棋子種類
+        /// </summary>
+        /// <param name="x">棋盤 x 座標</param>
+        /// <param name="y">棋盤 y 座標</param>
+        public PieceType GetCurrentPieceType(int x, int y)
+        {
+            if (pieces[x, y] == null) return PieceType.Other;
+
+            return pieces[x, y].GetPieceType();
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace Gomoku.Client.Interface
         /// <param name="y">棋盤 y 座標</param>
         /// <param name="type">棋子類別</param>
         /// <returns></returns>
-        public PieceBase PlaceAPiece(int x, int y, PieceType type);
+        public PieceBase PlaceAPiece(int x, int y);
 
         /// <summary>
         /// 判斷是否可以放置棋子
@@ -27,5 +27,11 @@ namespace Gomoku.Client.Interface
         /// <param name="y">棋盤 y 座標</param>
         /// <returns></returns>
         public bool CanBePlace(int x, int y);
+
+        /// <summary>
+        /// 檢查是否有贏家
+        /// </summary>
+        /// <returns></returns>
+        public string CheckWinner();
     }
 }

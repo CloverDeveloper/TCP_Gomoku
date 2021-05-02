@@ -19,8 +19,6 @@ namespace Gomoku.Client
     {
         private IGame game;
 
-        private PieceType pieceType = PieceType.Black;
-
         public Form1()
         {
             InitializeComponent();
@@ -34,23 +32,17 @@ namespace Gomoku.Client
         /// </summary>
         private void BoardMouseDown(object sender, MouseEventArgs e)
         {
-            PieceType currentPieceType = this.pieceType;
-
-            PieceBase piece = game.PlaceAPiece(e.X, e.Y, currentPieceType);
+            PieceBase piece = game.PlaceAPiece(e.X, e.Y);
             if (piece == null) return;
-
-            if (currentPieceType == PieceType.Black) 
-            {
-                this.pieceType = PieceType.White;
-            }
-
-            if (currentPieceType == PieceType.White)
-            {
-                this.pieceType = PieceType.Black;
-            }
 
             this.Controls.Add(piece);
             this.Controls.SetChildIndex(piece, 1);
+
+            string msg = game.CheckWinner();
+            if(msg != string.Empty)
+            {
+                MessageBox.Show(msg);
+            }
         }
 
         /// <summary>
