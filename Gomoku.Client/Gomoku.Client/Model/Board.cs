@@ -1,4 +1,5 @@
 ﻿using Gomoku.Client.Abstract;
+using Gomoku.Client.Enum;
 using Gomoku.Client.Interface;
 using System;
 using System.Collections.Generic;
@@ -117,6 +118,58 @@ namespace Gomoku.Client.Model
                 return quotient += 1;
 
             return -1;
+        }
+
+        /// <summary>
+        /// 放置棋子
+        /// </summary>
+        /// <param name="x">棋盤 x 座標</param>
+        /// <param name="y">棋盤 y 座標</param>
+        /// <param name="type">棋子類別</param>
+        /// <returns></returns>
+        public PieceBase PlaceAPiece(int x, int y, PieceType type)
+        {
+            // 找出最近節點
+            Point closeNode = this.GetCloseNode(x, y);
+            if (closeNode == NODE_NO_MATCH) return null;
+
+            // 判斷是否已經下過棋子
+            if (pieces[closeNode.X, closeNode.Y] != null) return null;
+
+            // 取得對應棋盤位置的點
+            Point boardNode = this.GetBoardNode(closeNode);
+
+            // 根據型態判斷要擺放的顏色
+            if (type == PieceType.Black)
+            {
+                pieces[closeNode.X, closeNode.Y] = new BlackPiece(boardNode.X, boardNode.Y);
+            }
+
+            if(type == PieceType.White)
+            {
+                pieces[closeNode.X, closeNode.Y] = new WhitePiece(boardNode.X, boardNode.Y);
+            }
+
+            // 紀錄最後一顆棋子位置
+            lastPiecePoint = closeNode;
+
+            return pieces[closeNode.X, closeNode.Y];
+        }
+
+        /// <summary>
+        /// 取得對應棋盤位置的點
+        /// </summary>
+        /// <param name="closeNode"></param>
+        /// <returns></returns>
+        private Point GetBoardNode(Point closeNode)
+        {
+            Point res = new Point();
+
+            // 換算棋盤上實際距離 = 距離點位置 * 棋隔間距 + 邊界距離
+            res.X = closeNode.X * NODE_DISTANCE + OFFSET;
+            res.Y = closeNode.Y * NODE_DISTANCE + OFFSET;
+
+            return res;
         }
     }
 }

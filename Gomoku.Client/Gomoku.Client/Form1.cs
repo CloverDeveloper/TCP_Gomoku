@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Gomoku.Client.Abstract;
+using Gomoku.Client.Enum;
 using Gomoku.Client.Extension;
 using Gomoku.Client.Interface;
 using Gomoku.Client.Model;
@@ -17,6 +18,8 @@ namespace Gomoku.Client
     public partial class Form1 : Form
     {
         private IGame game;
+
+        private PieceType pieceType = PieceType.Black;
 
         public Form1()
         {
@@ -31,7 +34,21 @@ namespace Gomoku.Client
         /// </summary>
         private void BoardMouseDown(object sender, MouseEventArgs e)
         {
-            var piece = new BlackPiece(e.X, e.Y);
+            PieceType currentPieceType = this.pieceType;
+
+            PieceBase piece = game.PlaceAPiece(e.X, e.Y, currentPieceType);
+            if (piece == null) return;
+
+            if (currentPieceType == PieceType.Black) 
+            {
+                this.pieceType = PieceType.White;
+            }
+
+            if (currentPieceType == PieceType.White)
+            {
+                this.pieceType = PieceType.Black;
+            }
+
             this.Controls.Add(piece);
             this.Controls.SetChildIndex(piece, 1);
         }
