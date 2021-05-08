@@ -12,6 +12,12 @@ using Gomoku.Client.Enum;
 using Gomoku.Client.Extension;
 using Gomoku.Client.Interface;
 using Gomoku.Client.Model;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using Gomoku.Common.Model;
+using Gomoku.Common.Enum;
+using Newtonsoft.Json;
 
 namespace Gomoku.Client
 {
@@ -19,14 +25,23 @@ namespace Gomoku.Client
     {
         private IGame game;
         private List<PieceBase> tempPieces = new List<PieceBase>();
+        private Socket sock;
+        private Thread th;
 
         public Form1()
         {
             InitializeComponent();
+            this.btn_SignIn.Enabled = true;
+            this.btn_Giveup.Enabled = false;
+            this.btn_SendMsg.Enabled = false;
+            this.pb_Board.Enabled = false;
+
             game = Game.GetInstance();
             this.pb_Board.MouseDown += Board_MouseDown;
             this.pb_Board.MouseMove += Board_MouseMove;
-            this.btn_giveup.Click += Btn_GiveUp;
+            this.btn_Giveup.Click += Btn_GiveUp;
+            this.btn_SignIn.Click += Btn_SignIn;
+            this.FormClosing += FormClose;
         }
 
         /// <summary>
@@ -88,6 +103,186 @@ namespace Gomoku.Client
             }
 
             game.ResetGame();
+        }
+
+        /// <summary>
+        /// 玩家登入
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_SignIn(object sender,EventArgs e)
+        {
+            this.btn_SignIn.Enabled = false;
+
+            string errMsg = this.CheckSignInInfo();
+            if(errMsg != string.Empty)
+            {
+                MessageBox.Show(errMsg);
+                return;
+            }
+
+            // 忽略跨執行緒錯誤
+            CheckForIllegalCrossThreadCalls = false; 
+
+            // 使用指定的通訊協定家族 (Family)、通訊端類型和通訊協定，初始化 Socket 類別的新執行個體。
+            this.sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                // 建立端點物件
+                IPEndPoint ipEP = new IPEndPoint(IPAddress.Parse(this.tb_IP.Text), int.Parse(this.tb_Port.Text));
+                this.sock.Connect(ipEP);
+
+                this.th = new Thread(new ThreadStart(Listener));
+                this.th.IsBackground = true;
+                this.th.Start();
+                this.tb_ChatBox.Text = "已連線伺服器" + Environment.NewLine;
+                this.SignInCommand();
+            }
+            catch(Exception ex)
+            {
+                this.tb_ChatBox.Text = "無法連上伺服器" + Environment.NewLine;
+                this.btn_SignIn.Enabled = true;
+                return;
+            }
+
+            this.btn_Giveup.Enabled = true;
+            this.btn_SendMsg.Enabled = true;
+            this.pb_Board.Enabled = true;
+        }
+
+        /// <summary>
+        /// 監聽伺服器狀態
+        /// </summary>
+        private void Listener()
+        {
+            // 取得端點
+            EndPoint remoteEp = this.sock.RemoteEndPoint;
+            byte[] receiveBytes = new byte[1023]; // 接受用 byte 陣列
+            int msgLength = 0; // 接收的位元組數目
+
+            while (true)
+            {
+                try
+                {
+                    msgLength =
+                        this.sock.ReceiveFrom(receiveBytes, 0, receiveBytes.Length, SocketFlags.None, ref remoteEp);
+                }
+                catch (Exception ex)
+                {
+                    this.sock.Close();
+                    this.lb_Users.Items.Clear();
+                    this.btn_SignIn.Enabled = true;
+                    this.btn_Giveup.Enabled = false;
+                    this.btn_SendMsg.Enabled = false;
+                    this.pb_Board.Enabled = false;
+                    this.th.Abort();
+
+                    MessageBox.Show("與伺服器斷線");
+                    return;
+                }
+
+                // 將傳來的 byte 陣列讀取成字串
+                string msg = Encoding.Default.GetString(receiveBytes, 0, msgLength);
+
+                // 反序列化字串訊息為 Command 物件
+                TCPCommand cmd = JsonConvert.DeserializeObject<TCPCommand>(msg);
+
+                switch (cmd.Type)
+                {
+                    case TCPCommandType.SetUserList:
+                        this.lb_Users.Items.Clear();
+                        string[] users = cmd.JsonString.Split(",");
+                        foreach (string user in users)
+                        {
+                            this.lb_Users.Items.Add(user);
+                        }
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 登入指令
+        /// </summary>
+        private void SignInCommand()
+        {
+            // 取得登入指令
+            string cmdStr = this.GetCommandStr(TCPCommandType.SignIn,this.tb_UserName.Text,false);
+
+            // 將登入指令轉為 byte 陣列
+            byte[] sendBytes = Encoding.Default.GetBytes(cmdStr);
+
+            this.sock.Send(sendBytes, 0, sendBytes.Length, SocketFlags.None);
+        }
+
+        /// <summary>
+        /// 取得序列化後的指令字串
+        /// </summary>
+        /// <returns></returns>
+        private string GetCommandStr(TCPCommandType type,object obj,bool needSerial)
+        {
+            TCPCommand cmd = new TCPCommand();
+
+            cmd.Type = type;
+            cmd.JsonString = obj.ToString();
+            if(needSerial)
+            {
+                cmd.JsonString = JsonConvert.SerializeObject(obj);
+            }
+
+            return JsonConvert.SerializeObject(cmd);
+        }
+
+        /// <summary>
+        /// 檢核連線資訊
+        /// </summary>
+        /// <returns></returns>
+        private string CheckSignInInfo()
+        {
+            if (string.IsNullOrEmpty(this.tb_UserName.Text))
+            {
+                return "請輸入使用者名稱";
+            }
+
+            if (string.IsNullOrEmpty(this.tb_IP.Text))
+            {
+                return "請輸入連線 IP";
+            }
+
+            if (!IPAddress.TryParse(this.tb_IP.Text,out IPAddress ipRes))
+            {
+                return "連線 IP 輸入錯誤";
+            }
+
+            if (string.IsNullOrEmpty(this.tb_Port.Text))
+            {
+                return "請輸入連線 Port";
+            }
+
+            if (!int.TryParse(this.tb_Port.Text, out int portRes))
+            {
+                return "連線 Port 輸入錯誤";
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// 表單結束事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FormClose(object sender, FormClosingEventArgs e)
+        {
+            if (this.btn_SignIn.Enabled) return;
+
+            string cmdStr = this.GetCommandStr(TCPCommandType.SignOut, this.tb_UserName.Text, false);
+            byte[] sendBytes = Encoding.Default.GetBytes(cmdStr);
+
+            this.sock.Send(sendBytes,0, sendBytes.Length,SocketFlags.None);
+
+            // this.sock.Close();
+            Application.ExitThread();
         }
     }
 }

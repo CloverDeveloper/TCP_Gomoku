@@ -40,11 +40,11 @@ namespace Gomoku.Client
             this.tb_IP = new System.Windows.Forms.TextBox();
             this.tb_Port = new System.Windows.Forms.TextBox();
             this.tb_UserName = new System.Windows.Forms.TextBox();
-            this.btn_Login = new System.Windows.Forms.Button();
+            this.btn_SignIn = new System.Windows.Forms.Button();
             this.tb_MsgBox = new System.Windows.Forms.TextBox();
             this.tb_ChatBox = new System.Windows.Forms.TextBox();
             this.btn_SendMsg = new System.Windows.Forms.Button();
-            this.btn_giveup = new System.Windows.Forms.Button();
+            this.btn_Giveup = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Board)).BeginInit();
             this.SuspendLayout();
             // 
@@ -133,14 +133,14 @@ namespace Gomoku.Client
             this.tb_UserName.Size = new System.Drawing.Size(168, 27);
             this.tb_UserName.TabIndex = 9;
             // 
-            // btn_Login
+            // btn_SignIn
             // 
-            this.btn_Login.Location = new System.Drawing.Point(772, 204);
-            this.btn_Login.Name = "btn_Login";
-            this.btn_Login.Size = new System.Drawing.Size(168, 49);
-            this.btn_Login.TabIndex = 10;
-            this.btn_Login.Text = "登入伺服器";
-            this.btn_Login.UseVisualStyleBackColor = true;
+            this.btn_SignIn.Location = new System.Drawing.Point(772, 204);
+            this.btn_SignIn.Name = "btn_SignIn";
+            this.btn_SignIn.Size = new System.Drawing.Size(168, 49);
+            this.btn_SignIn.TabIndex = 10;
+            this.btn_SignIn.Text = "登入伺服器";
+            this.btn_SignIn.UseVisualStyleBackColor = true;
             // 
             // tb_MsgBox
             // 
@@ -167,25 +167,25 @@ namespace Gomoku.Client
             this.btn_SendMsg.Text = "發話";
             this.btn_SendMsg.UseVisualStyleBackColor = true;
             // 
-            // btn_giveup
+            // btn_Giveup
             // 
-            this.btn_giveup.Location = new System.Drawing.Point(772, 721);
-            this.btn_giveup.Name = "btn_giveup";
-            this.btn_giveup.Size = new System.Drawing.Size(168, 29);
-            this.btn_giveup.TabIndex = 14;
-            this.btn_giveup.Text = "投降";
-            this.btn_giveup.UseVisualStyleBackColor = true;
+            this.btn_Giveup.Location = new System.Drawing.Point(772, 721);
+            this.btn_Giveup.Name = "btn_Giveup";
+            this.btn_Giveup.Size = new System.Drawing.Size(168, 29);
+            this.btn_Giveup.TabIndex = 14;
+            this.btn_Giveup.Text = "投降";
+            this.btn_Giveup.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 753);
-            this.Controls.Add(this.btn_giveup);
+            this.Controls.Add(this.btn_Giveup);
             this.Controls.Add(this.btn_SendMsg);
             this.Controls.Add(this.tb_ChatBox);
             this.Controls.Add(this.tb_MsgBox);
-            this.Controls.Add(this.btn_Login);
+            this.Controls.Add(this.btn_SignIn);
             this.Controls.Add(this.tb_UserName);
             this.Controls.Add(this.tb_Port);
             this.Controls.Add(this.tb_IP);
@@ -216,12 +216,12 @@ namespace Gomoku.Client
         private System.Windows.Forms.TextBox tb_IP;
         private System.Windows.Forms.TextBox tb_Port;
         private System.Windows.Forms.TextBox tb_UserName;
-        private System.Windows.Forms.Button btn_Login;
+        private System.Windows.Forms.Button btn_SignIn;
         private System.Windows.Forms.TextBox tb_MsgBox;
         private System.Windows.Forms.TextBox tb_ChatBox;
         private System.Windows.Forms.Button btn_SendMsg;
         private System.Windows.Forms.Button btn_lose;
-        private System.Windows.Forms.Button btn_giveup;
+        private System.Windows.Forms.Button btn_Giveup;
     }
 }
 

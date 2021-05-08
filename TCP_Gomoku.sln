@@ -5,7 +5,15 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gomoku.Client", "Gomoku.Client", "{309B5DF3-50A3-49B4-BE1F-C7B0748819C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gomoku.Client", "Gomoku.Client\Gomoku.Client\Gomoku.Client.csproj", "{70739A68-CBC0-4451-B237-0383024F4313}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gomoku.Client", "Gomoku.Client\Gomoku.Client\Gomoku.Client.csproj", "{70739A68-CBC0-4451-B237-0383024F4313}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gomoku.Server", "Gomoku.Server", "{E4FD029D-D6B0-48FA-BD86-BA23793548E3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gomoku.Server", "Gomoku.Server\Gomoku.Server\Gomoku.Server.csproj", "{62FE9BE7-7663-440B-961B-C8FB45C8DC32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gomoku.Common", "Gomoku.Common", "{34031114-2C6E-41AA-829D-69D61F0723C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gomoku.Common", "Gomoku.Common\Gomoku.Common\Gomoku.Common.csproj", "{426DF80B-6A84-4A90-8A5D-E0540F79A447}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +25,22 @@ Global
 		{70739A68-CBC0-4451-B237-0383024F4313}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70739A68-CBC0-4451-B237-0383024F4313}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70739A68-CBC0-4451-B237-0383024F4313}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62FE9BE7-7663-440B-961B-C8FB45C8DC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62FE9BE7-7663-440B-961B-C8FB45C8DC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62FE9BE7-7663-440B-961B-C8FB45C8DC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62FE9BE7-7663-440B-961B-C8FB45C8DC32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426DF80B-6A84-4A90-8A5D-E0540F79A447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426DF80B-6A84-4A90-8A5D-E0540F79A447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426DF80B-6A84-4A90-8A5D-E0540F79A447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426DF80B-6A84-4A90-8A5D-E0540F79A447}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{70739A68-CBC0-4451-B237-0383024F4313} = {309B5DF3-50A3-49B4-BE1F-C7B0748819C6}
+		{62FE9BE7-7663-440B-961B-C8FB45C8DC32} = {E4FD029D-D6B0-48FA-BD86-BA23793548E3}
+		{426DF80B-6A84-4A90-8A5D-E0540F79A447} = {34031114-2C6E-41AA-829D-69D61F0723C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1A191D89-DE23-4D59-84E8-3D3B8C21D16B}
