@@ -128,6 +128,9 @@ namespace Gomoku.Server
                         case TCPCommandType.SignOut:
                             this.SignOutCommand(cmd.JsonString, sock, thread);
                             break;
+                        case TCPCommandType.Chat:
+                            this.ChatCommand(cmd);
+                            break;
                     }
 
                 }
@@ -149,7 +152,7 @@ namespace Gomoku.Server
             string userStr = this.GetUserStr();
 
             // 取得序列化後的指令字串
-            string cmdStr = this.GetCommandStr(TCPCommandType.SetUserList, userStr, false);
+            string cmdStr = this.GetCommandStr(TCPCommandType.SetUserList, string.Empty, userStr, false);
 
             // 傳送訊息
             this.SendAll(cmdStr);
@@ -168,13 +171,50 @@ namespace Gomoku.Server
             string userStr = this.GetUserStr();
 
             // 取得序列化後的指令字串
-            string cmdStr = this.GetCommandStr(TCPCommandType.SetUserList, userStr, false);
+            string cmdStr = this.GetCommandStr(TCPCommandType.SetUserList, string.Empty,userStr, false);
 
             // 傳送訊息
             this.SendAll(cmdStr);
 
             th.Abort();
             sock.Close();
+        }
+
+        /// <summary>
+        /// 傳送聊天指令
+        /// </summary>
+        /// <param name="cmd"></param>
+        private void ChatCommand(TCPCommand cmd)
+        {
+            Socket sock = this.GetTargetSocket(cmd);
+
+            if (sock == null) return;
+
+            string cmdStr = this.GetCommandStr(cmd.Type, cmd.SendFrom, cmd.JsonString, false);
+
+            this.SendTo(cmdStr, sock);
+        }
+
+        /// <summary>
+        /// 取得對象 Socket
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        private Socket GetTargetSocket(TCPCommand cmd)
+        {
+            string otherUserName = string.Empty;
+
+            foreach (string userName in this.ht.Keys)
+            {
+                if (userName != cmd.SendFrom)
+                {
+                    otherUserName = userName;
+                }
+            }
+
+            if (otherUserName == string.Empty || !this.ht.Contains(otherUserName)) return null;
+
+            return (Socket)this.ht[otherUserName];
         }
 
         /// <summary>
@@ -189,6 +229,18 @@ namespace Gomoku.Server
             {
                 sk.Send(sendBytes, 0, sendBytes.Length, SocketFlags.None);
             }
+        }
+
+        /// <summary>
+        /// 發送至對象端
+        /// </summary>
+        /// <param name="cmdStr"></param>
+        /// <param name="sock"></param>
+        private void SendTo(string cmdStr,Socket sock)
+        {
+            byte[] sendBytes = Encoding.Default.GetBytes(cmdStr);
+
+            sock.Send(sendBytes, 0, sendBytes.Length, SocketFlags.None);
         }
 
         /// <summary>
@@ -220,11 +272,12 @@ namespace Gomoku.Server
         /// <param name="obj">需要序列化的資料</param>
         /// <param name="needSerial">是否需要序列化</param>
         /// <returns></returns>
-        private string GetCommandStr(TCPCommandType type,object obj,bool needSerial)
+        private string GetCommandStr(TCPCommandType type,string sendFrom,object obj,bool needSerial)
         {
             TCPCommand cmd = new TCPCommand();
 
             cmd.Type = type;
+            cmd.SendFrom = sendFrom;
             cmd.JsonString = obj.ToString();
             if (needSerial)
             {

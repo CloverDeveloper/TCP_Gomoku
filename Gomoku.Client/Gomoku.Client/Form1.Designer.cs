@@ -147,6 +147,7 @@ namespace Gomoku.Client
             this.tb_MsgBox.Location = new System.Drawing.Point(772, 374);
             this.tb_MsgBox.Multiline = true;
             this.tb_MsgBox.Name = "tb_MsgBox";
+            this.tb_MsgBox.ReadOnly = true;
             this.tb_MsgBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tb_MsgBox.Size = new System.Drawing.Size(168, 251);
             this.tb_MsgBox.TabIndex = 11;

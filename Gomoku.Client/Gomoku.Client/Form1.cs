@@ -32,6 +32,7 @@ namespace Gomoku.Client
         {
             InitializeComponent();
             this.btn_SignIn.Enabled = true;
+            this.tb_UserName.Enabled = true;
             this.btn_Giveup.Enabled = false;
             this.btn_SendMsg.Enabled = false;
             this.pb_Board.Enabled = false;
@@ -41,6 +42,7 @@ namespace Gomoku.Client
             this.pb_Board.MouseMove += Board_MouseMove;
             this.btn_Giveup.Click += Btn_GiveUp;
             this.btn_SignIn.Click += Btn_SignIn;
+            this.btn_SendMsg.Click += Btn_SendMsg;
             this.FormClosing += FormClose;
         }
 
@@ -135,12 +137,12 @@ namespace Gomoku.Client
                 this.th = new Thread(new ThreadStart(Listener));
                 this.th.IsBackground = true;
                 this.th.Start();
-                this.tb_ChatBox.Text = "已連線伺服器" + Environment.NewLine;
+                this.tb_MsgBox.Text = "已連線伺服器" + Environment.NewLine;
                 this.SignInCommand();
             }
             catch(Exception ex)
             {
-                this.tb_ChatBox.Text = "無法連上伺服器" + Environment.NewLine;
+                this.tb_MsgBox.Text = "無法連上伺服器" + Environment.NewLine;
                 this.btn_SignIn.Enabled = true;
                 return;
             }
@@ -148,6 +150,26 @@ namespace Gomoku.Client
             this.btn_Giveup.Enabled = true;
             this.btn_SendMsg.Enabled = true;
             this.pb_Board.Enabled = true;
+            this.tb_UserName.Enabled = false;
+        }
+
+        /// <summary>
+        /// 發送訊息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Btn_SendMsg(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.tb_ChatBox.Text)) return;
+
+            string cmdStr = 
+                this.GetCommandStr(TCPCommandType.Chat, this.tb_UserName.Text, this.tb_ChatBox.Text, false);
+
+            this.SendTo(cmdStr);
+
+            this.tb_MsgBox.Text += $"自己 : {this.tb_ChatBox.Text}" + Environment.NewLine;
+
+            this.tb_ChatBox.Text = string.Empty;
         }
 
         /// <summary>
@@ -175,6 +197,7 @@ namespace Gomoku.Client
                     this.btn_Giveup.Enabled = false;
                     this.btn_SendMsg.Enabled = false;
                     this.pb_Board.Enabled = false;
+                    this.tb_UserName.Enabled = true;
                     this.th.Abort();
 
                     MessageBox.Show("與伺服器斷線");
@@ -190,12 +213,10 @@ namespace Gomoku.Client
                 switch (cmd.Type)
                 {
                     case TCPCommandType.SetUserList:
-                        this.lb_Users.Items.Clear();
-                        string[] users = cmd.JsonString.Split(",");
-                        foreach (string user in users)
-                        {
-                            this.lb_Users.Items.Add(user);
-                        }
+                        this.SetUserListCommand(cmd.JsonString);
+                        break;
+                    case TCPCommandType.Chat:
+                        this.tb_MsgBox.Text += $"{cmd.SendFrom} : {cmd.JsonString}"+Environment.NewLine;
                         break;
                 }
             }
@@ -207,8 +228,19 @@ namespace Gomoku.Client
         private void SignInCommand()
         {
             // 取得登入指令
-            string cmdStr = this.GetCommandStr(TCPCommandType.SignIn,this.tb_UserName.Text,false);
+            string cmdStr = 
+                this.GetCommandStr(TCPCommandType.SignIn, this.tb_UserName.Text, this.tb_UserName.Text,false);
 
+            // 發送訊息
+            this.SendTo(cmdStr);
+        }
+
+        /// <summary>
+        /// 發送訊息
+        /// </summary>
+        /// <param name="cmdStr"></param>
+        private void SendTo(string cmdStr)
+        {
             // 將登入指令轉為 byte 陣列
             byte[] sendBytes = Encoding.Default.GetBytes(cmdStr);
 
@@ -216,14 +248,28 @@ namespace Gomoku.Client
         }
 
         /// <summary>
+        /// 設定玩家列表指令
+        /// </summary>
+        private void SetUserListCommand(string users)
+        {
+            this.lb_Users.Items.Clear();
+            string[] userArray = users.Split(",");
+            foreach (string user in userArray)
+            {
+                this.lb_Users.Items.Add(user);
+            }
+        }
+
+        /// <summary>
         /// 取得序列化後的指令字串
         /// </summary>
         /// <returns></returns>
-        private string GetCommandStr(TCPCommandType type,object obj,bool needSerial)
+        private string GetCommandStr(TCPCommandType type,string sendFrom,object obj,bool needSerial)
         {
             TCPCommand cmd = new TCPCommand();
 
             cmd.Type = type;
+            cmd.SendFrom = sendFrom;
             cmd.JsonString = obj.ToString();
             if(needSerial)
             {
@@ -276,12 +322,12 @@ namespace Gomoku.Client
         {
             if (this.btn_SignIn.Enabled) return;
 
-            string cmdStr = this.GetCommandStr(TCPCommandType.SignOut, this.tb_UserName.Text, false);
-            byte[] sendBytes = Encoding.Default.GetBytes(cmdStr);
+            string cmdStr = 
+                this.GetCommandStr(TCPCommandType.SignOut, this.tb_UserName.Text, this.tb_UserName.Text, false);
 
-            this.sock.Send(sendBytes,0, sendBytes.Length,SocketFlags.None);
+            this.SendTo(cmdStr);
 
-            // this.sock.Close();
+            this.sock.Close();
             Application.ExitThread();
         }
     }
