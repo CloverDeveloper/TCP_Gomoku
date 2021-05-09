@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum\TCPCommandType.cs" />
+    <Compile Include="Model\InitGameSetting.cs" />
+    <Compile Include="Enum\PieceType.cs" />
     <Compile Include="Model\TCPCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

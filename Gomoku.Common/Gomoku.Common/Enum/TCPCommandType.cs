@@ -16,6 +16,7 @@ namespace Gomoku.Common.Enum
         GiveUp,
         SignIn,
         SignOut,
-        SetUserList
+        SetUserList,
+        GameStart
     }
 }

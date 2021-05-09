@@ -1,6 +1,6 @@
 ﻿using Gomoku.Client.Abstract;
-using Gomoku.Client.Enum;
 using Gomoku.Client.Interface;
+using Gomoku.Common.Enum;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -49,6 +49,18 @@ namespace Gomoku.Client.Model
 
             return instance;
         }
+
+        //public PieceType NextPlayer
+        //{
+        //    get { return this.nextPlayer; }
+        //    set { this.nextPlayer = value; }
+        //}
+
+        //public PieceType CurrentPlayer
+        //{
+        //    get { return this.currentPlayer; }
+        //    set { this.currentPlayer = value; }
+        //}
 
         /// <summary>
         /// 判斷是否可以放置棋子

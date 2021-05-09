@@ -1,5 +1,5 @@
 ﻿using Gomoku.Client.Abstract;
-using Gomoku.Client.Enum;
+using Gomoku.Common.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;

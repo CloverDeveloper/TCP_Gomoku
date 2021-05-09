@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-using Gomoku.Client.Enum;
+using Gomoku.Common.Enum;
 
 namespace Gomoku.Client.Abstract
 {

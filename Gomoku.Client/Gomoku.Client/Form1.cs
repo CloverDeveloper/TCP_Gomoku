@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Gomoku.Client.Abstract;
-using Gomoku.Client.Enum;
 using Gomoku.Client.Extension;
 using Gomoku.Client.Interface;
 using Gomoku.Client.Model;
@@ -23,7 +22,7 @@ namespace Gomoku.Client
 {
     public partial class Form1 : Form
     {
-        private IGame game;
+        private Game game;
         private List<PieceBase> tempPieces = new List<PieceBase>();
         private Socket sock;
         private Thread th;
@@ -35,7 +34,6 @@ namespace Gomoku.Client
             this.tb_UserName.Enabled = true;
             this.btn_Giveup.Enabled = false;
             this.btn_SendMsg.Enabled = false;
-            this.pb_Board.Enabled = false;
 
             game = Game.GetInstance();
             this.pb_Board.MouseDown += Board_MouseDown;
@@ -51,19 +49,45 @@ namespace Gomoku.Client
         /// </summary>
         private void Board_MouseDown(object sender, MouseEventArgs e)
         {
-            PieceBase piece = game.PlaceAPiece(e.X, e.Y);
+            if (!this.pb_Board.Enabled) return;
+
+            this.PlaceAPiece(e.X, e.Y);
+
+            string cmdStr = 
+                this.GetCommandStr(TCPCommandType.PlaceAPiece, this.tb_UserName.Text, new Point(e.X, e.Y),true);
+
+            this.SendTo(cmdStr);
+
+            this.pb_Board.Enabled = false;
+            this.Cursor = Cursors.Default;
+        }
+
+        /// <summary>
+        /// 放置棋子方法
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        private void PlaceAPiece(int x,int y)
+        {
+            PieceBase piece = game.PlaceAPiece(x, y);
             if (piece == null) return;
 
             tempPieces.Add(piece);
 
-            this.Controls.Add(piece);
-            this.Controls.SetChildIndex(piece, 1);
+            MethodInvoker callMethod = new MethodInvoker(() => 
+            {
+                this.Controls.Add(piece);
+                this.Controls.SetChildIndex(piece, 1);
+            });
+
+            this.BeginInvoke(callMethod);
 
             string msg = game.CheckWinner();
-            if(msg != string.Empty)
+            if (msg != string.Empty)
             {
                 MessageBox.Show(msg);
                 this.ResetGame();
+                return;
             }
         }
 
@@ -74,6 +98,12 @@ namespace Gomoku.Client
         /// <param name="e"></param>
         private void Board_MouseMove(object sender, MouseEventArgs e)
         {
+            if (!this.pb_Board.Enabled)
+            {
+                this.Cursor = Cursors.Default;
+                return;
+            }
+
             if (game.CanBePlace(e.X, e.Y)) 
             {
                 this.Cursor = Cursors.Hand;
@@ -91,6 +121,23 @@ namespace Gomoku.Client
         /// <param name="e"></param>
         private void Btn_GiveUp(object sender,EventArgs e)
         {
+            MessageBox.Show($"玩家:{this.tb_UserName.Text}，認輸了!!，遊戲重新開始。");
+
+            this.ResetGame();
+
+            string cmdStr = 
+                this.GetCommandStr(TCPCommandType.GiveUp, this.tb_UserName.Text, this.tb_UserName.Text, false);
+
+            this.SendTo(cmdStr);
+        }
+
+        /// <summary>
+        /// 投降認輸指令
+        /// </summary>
+        /// <param name="cmdStr"></param>
+        private void GiveUpCommand(string cmdStr)
+        {
+            MessageBox.Show($"玩家:{cmdStr}，認輸了!!，遊戲重新開始。");
             this.ResetGame();
         }
 
@@ -99,10 +146,15 @@ namespace Gomoku.Client
         /// </summary>
         private void ResetGame()
         {
-            foreach (PieceBase piece in this.tempPieces)
+            MethodInvoker callMethod = new MethodInvoker(() =>
             {
-                this.Controls.Remove(piece);
-            }
+                foreach (PieceBase piece in this.tempPieces)
+                {
+                    this.Controls.Remove(piece);
+                }
+            });
+
+            this.BeginInvoke(callMethod);
 
             game.ResetGame();
         }
@@ -218,6 +270,15 @@ namespace Gomoku.Client
                     case TCPCommandType.Chat:
                         this.tb_MsgBox.Text += $"{cmd.SendFrom} : {cmd.JsonString}"+Environment.NewLine;
                         break;
+                    case TCPCommandType.GameStart:
+                        this.GameStartCommand(cmd.JsonString);
+                        break;
+                    case TCPCommandType.PlaceAPiece:
+                        this.PlaceAPieceCommand(cmd.JsonString);
+                        break;
+                    case TCPCommandType.GiveUp:
+                        this.GiveUpCommand(cmd.JsonString);
+                        break;
                 }
             }
         }
@@ -233,6 +294,19 @@ namespace Gomoku.Client
 
             // 發送訊息
             this.SendTo(cmdStr);
+        }
+
+        /// <summary>
+        /// 接受對方放置棋子方法
+        /// </summary>
+        private void PlaceAPieceCommand(string cmdStr)
+        {
+            Point point = JsonConvert.DeserializeObject<Point>(cmdStr);
+            if (point == null) return;
+
+            this.PlaceAPiece(point.X, point.Y);
+
+            this.pb_Board.Enabled = true;
         }
 
         /// <summary>
@@ -277,6 +351,20 @@ namespace Gomoku.Client
             }
 
             return JsonConvert.SerializeObject(cmd);
+        }
+
+        /// <summary>
+        /// 取得初始化遊戲資訊
+        /// </summary>
+        private void GameStartCommand(string cmdStr)
+        {
+            InitGameSetting init = JsonConvert.DeserializeObject<InitGameSetting>(cmdStr);
+
+            if (init == null) return;
+
+            this.pb_Board.Enabled = init.CanPlaceAPiece;
+            //this.game.NextPlayer = init.PieceType;
+            //this.game.CurrentPlayer = init.PieceType;
         }
 
         /// <summary>

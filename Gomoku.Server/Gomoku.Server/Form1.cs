@@ -131,6 +131,12 @@ namespace Gomoku.Server
                         case TCPCommandType.Chat:
                             this.ChatCommand(cmd);
                             break;
+                        case TCPCommandType.PlaceAPiece:
+                            this.PlaceAPieceCommand(cmd);
+                            break;
+                        case TCPCommandType.GiveUp:
+                            this.GiveUpCommand(cmd);
+                            break;
                     }
 
                 }
@@ -156,6 +162,12 @@ namespace Gomoku.Server
 
             // 傳送訊息
             this.SendAll(cmdStr);
+
+            // 若玩家人數到達 2 人
+            if(this.ht.Keys.Count == 2)
+            {
+                this.GameStartCommand();
+            }
         }
 
         /// <summary>
@@ -185,6 +197,58 @@ namespace Gomoku.Server
         /// </summary>
         /// <param name="cmd"></param>
         private void ChatCommand(TCPCommand cmd)
+        {
+            Socket sock = this.GetTargetSocket(cmd);
+
+            if (sock == null) return;
+
+            string cmdStr = this.GetCommandStr(cmd.Type, cmd.SendFrom, cmd.JsonString, false);
+
+            this.SendTo(cmdStr, sock);
+        }
+
+        /// <summary>
+        /// 遊戲開始指令
+        /// </summary>
+        private void GameStartCommand()
+        {
+            bool isFirst = true;
+            InitGameSetting init;
+            foreach (Socket sock in this.ht.Values)
+            {
+                init = new InitGameSetting();
+                init.PieceType = isFirst ? PieceType.Black : PieceType.White;
+                init.CanPlaceAPiece = isFirst;
+
+                isFirst = !isFirst;
+
+                // 取得序列化後的指令字串
+                string cmdStr = this.GetCommandStr(TCPCommandType.GameStart, string.Empty, init, true);
+
+                this.SendTo(cmdStr, sock);
+            }
+        }
+
+        /// <summary>
+        /// 放置棋子方法-同聊天方法
+        /// </summary>
+        /// <param name="cmd"></param>
+        private void PlaceAPieceCommand(TCPCommand cmd)
+        {
+            Socket sock = this.GetTargetSocket(cmd);
+
+            if (sock == null) return;
+
+            string cmdStr = this.GetCommandStr(cmd.Type, cmd.SendFrom, cmd.JsonString, false);
+
+            this.SendTo(cmdStr, sock);
+        }
+
+        /// <summary>
+        /// 接收玩家認輸指令
+        /// </summary>
+        /// <param name="cmd"></param>
+        private void GiveUpCommand(TCPCommand cmd)
         {
             Socket sock = this.GetTargetSocket(cmd);
 

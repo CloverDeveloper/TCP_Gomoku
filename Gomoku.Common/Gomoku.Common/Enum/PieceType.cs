@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Gomoku.Client.Enum
+namespace Gomoku.Common.Enum
 {
     /// <summary>
     /// 棋子類型列舉

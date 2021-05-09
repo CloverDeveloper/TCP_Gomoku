@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Gomoku.Client.Abstract;
-using Gomoku.Client.Enum;
+using Gomoku.Common.Enum;
 
 namespace Gomoku.Client.Model
 {
