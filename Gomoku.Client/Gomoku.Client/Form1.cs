@@ -51,7 +51,9 @@ namespace Gomoku.Client
         {
             if (!this.pb_Board.Enabled) return;
 
-            this.PlaceAPiece(e.X, e.Y);
+            bool placeRes = this.PlaceAPiece(e.X, e.Y);
+
+            if (!placeRes) return;
 
             string cmdStr = 
                 this.GetCommandStr(TCPCommandType.PlaceAPiece, this.tb_UserName.Text, new Point(e.X, e.Y),true);
@@ -67,10 +69,11 @@ namespace Gomoku.Client
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        private void PlaceAPiece(int x,int y)
+        private bool PlaceAPiece(int x,int y)
         {
+            bool placeSuccess = false;
             PieceBase piece = game.PlaceAPiece(x, y);
-            if (piece == null) return;
+            if (piece == null) return placeSuccess;
 
             tempPieces.Add(piece);
 
@@ -81,14 +84,17 @@ namespace Gomoku.Client
             });
 
             this.BeginInvoke(callMethod);
-
+            placeSuccess = true;
             string msg = game.CheckWinner();
+
             if (msg != string.Empty)
             {
                 MessageBox.Show(msg);
                 this.ResetGame();
-                return;
+                return placeSuccess;
             }
+
+            return placeSuccess;
         }
 
         /// <summary>
@@ -304,7 +310,9 @@ namespace Gomoku.Client
             Point point = JsonConvert.DeserializeObject<Point>(cmdStr);
             if (point == null) return;
 
-            this.PlaceAPiece(point.X, point.Y);
+            var placeRes = this.PlaceAPiece(point.X, point.Y);
+
+            if (!placeRes) return;
 
             this.pb_Board.Enabled = true;
         }
